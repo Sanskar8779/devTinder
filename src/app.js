@@ -2,14 +2,21 @@ const express = require("express");
 
 const app = express();
 
-app.use("/profile", (req, res) => {
-	res.send("Hello from profile!");
+app.use("/test", (req, res) => {
+	res.send("Server working");
 });
 
-app.use("/connection", (req, res) => {
-	res.send("Hello from connection!");
+app.get("/user", (req, res) => {
+	res.send({ firstName: "Sanskar", lastName: "Shubham" });
 });
 
-app.listen(7777, () => {
-	console.log("Server is running on port 7777");
+app.post("/user", (req, res) => {
+	res.send({ message: "User created" });
+});
+
+app.delete("/user", (req, res) => {
+	res.send({ message: "User deleted" });
+});
+app.listen(4000, () => {
+	console.log("Server is running on port 4000");
 });
