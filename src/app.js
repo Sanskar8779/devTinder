@@ -6,7 +6,8 @@ app.use("/test", (req, res) => {
 	res.send("Server working");
 });
 
-app.get("/user", (req, res) => {
+app.get("/user/:userId/:name", (req, res) => {
+	console.log(req.params);
 	res.send({ firstName: "Sanskar", lastName: "Shubham" });
 });
 
