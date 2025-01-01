@@ -1,38 +1,33 @@
 const express = require("express");
-const { authAdmin, userAdmin } = require("./middleware/auth");
+const connectDB = require("./config/database");
+const User = require("./models/user");
 
 const app = express();
 
-// app.use("/admin", authAdmin);
-app.use("/user/login", (req, res) => {
-	res.send("User login page");
-});
+app.post("/signup", async (req, res) => {
+	const user = new User({
+		firstName: "Sanskar",
+		lastName: "Shubham",
+		email: "sanskar@shubham.com",
+		password: "sanskar",
+		age: 23,
+	});
 
-app.get("/user", userAdmin, (req, res) => {
-	res.send("User data");
-});
-
-app.get("/admin/getAllData", authAdmin, (req, res) => {
-	res.send("All data of admin");
-});
-
-app.get("/admin/deleteUser", authAdmin, (req, res) => {
-	res.send("User deleted");
-});
-
-app.use("/test", (req, res) => {
 	try {
-		throw new Error("Erooorror");
-		res.send("test route");
+		await user.save();
+		res.send("User added successfully!");
 	} catch (err) {
-		res.status(500).send(err.message);
+		res.status(400).send("Error saving the user", err);
 	}
 });
 
-app.use("/", (err, req, res, next) => {
-	res.status(500).send("Something went wrong");
-});
-
-app.listen(7777, (req, res) => {
-	console.log("Server is running on port 4000");
-});
+connectDB()
+	.then(() => {
+		console.log("Database connected successfully");
+		app.listen(7777, (req, res) => {
+			console.log("Server is running on port 7777");
+		});
+	})
+	.catch((err) => {
+		console.log("Error connecting to database", err);
+	});
