@@ -3,11 +3,13 @@ const connectDB = require("./config/database");
 const User = require("./models/user");
 const { validateSignupData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
+const validator = require("validator");
 
 const app = express();
 
 app.use(express.json()); //this will convert json into JS object
 
+//signup
 app.post("/signup", async (req, res) => {
 	//Validate the user
 	try {
@@ -27,6 +29,28 @@ app.post("/signup", async (req, res) => {
 
 		await user.save();
 		res.send("User added successfully!");
+	} catch (err) {
+		res.status(400).send("ERROR: " + err.message);
+	}
+});
+
+//login
+app.post("/login", async (req, res) => {
+	try {
+		const { email, password } = req.body;
+		//check if user exists
+		const user = await User.findOne({ email });
+		if (!user) {
+			throw new Error("Invalid credentials");
+		}
+		//check if password correct
+		const isCorrect = await bcrypt.compare(password, user.password);
+		if (!isCorrect) {
+			throw new Error("Invalid credentials");
+		}
+
+		//everything good
+		res.send("Login successful");
 	} catch (err) {
 		res.status(400).send("ERROR: " + err.message);
 	}
