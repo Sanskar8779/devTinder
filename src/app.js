@@ -52,7 +52,7 @@ app.post("/login", async (req, res) => {
 		}
 
 		//create jwt token
-		const token = await jwt.sign({ _id: user._id }, "dev@Tinder790");
+		const token = jwt.sign({ _id: user._id }, "dev@Tinder790");
 
 		//everything good
 		res.cookie("token", token);
@@ -69,7 +69,7 @@ app.get("/profile", async (req, res) => {
 		if (!token) {
 			throw new Error("Invalid Token");
 		}
-		const decodedMsg = await jwt.verify(token, "dev@Tinder790");
+		const decodedMsg = jwt.verify(token, "dev@Tinder790");
 		const user = await User.findById({ _id: decodedMsg._id });
 		if (!user) {
 			throw new Error("User not found");
