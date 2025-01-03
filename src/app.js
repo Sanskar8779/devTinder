@@ -3,11 +3,13 @@ const connectDB = require("./config/database");
 const User = require("./models/user");
 const { validateSignupData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
-const validator = require("validator");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
 app.use(express.json()); //this will convert json into JS object
+app.use(cookieParser());
 
 //signup
 app.post("/signup", async (req, res) => {
@@ -49,8 +51,30 @@ app.post("/login", async (req, res) => {
 			throw new Error("Invalid credentials");
 		}
 
+		//create jwt token
+		const token = await jwt.sign({ _id: user._id }, "dev@Tinder790");
+
 		//everything good
+		res.cookie("token", token);
 		res.send("Login successful");
+	} catch (err) {
+		res.status(400).send("ERROR: " + err.message);
+	}
+});
+
+app.get("/profile", async (req, res) => {
+	try {
+		//validate jwt token
+		const { token } = req.cookies;
+		if (!token) {
+			throw new Error("Invalid Token");
+		}
+		const decodedMsg = await jwt.verify(token, "dev@Tinder790");
+		const user = await User.findById({ _id: decodedMsg._id });
+		if (!user) {
+			throw new Error("User not found");
+		}
+		res.send(user);
 	} catch (err) {
 		res.status(400).send("ERROR: " + err.message);
 	}
@@ -89,7 +113,6 @@ app.get("/feed", async (req, res) => {
 //Delete a user
 app.delete("/user", async (req, res) => {
 	const userId = req.body.userId;
-	console.log(userId);
 	try {
 		const user = await User.findByIdAndDelete(userId);
 		res.send("User deleted successfully");
