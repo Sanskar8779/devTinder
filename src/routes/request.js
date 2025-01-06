@@ -46,6 +46,7 @@ requestRouter.post(
 			const data = await connection.save();
 			res.json({
 				message: "Connection sent successfully!",
+				status: status,
 				data: data,
 			});
 		} catch (err) {
