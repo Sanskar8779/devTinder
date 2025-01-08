@@ -14,10 +14,11 @@
 
 ## conenctionRequestApi
 
-- POST /request/send/ignored/:userId
-- POST /request/send/interested/:userId
-- POST /request/review/accepted/:userId
-- POST /request/review/rejected/:userId
+- POST /request/send/:status/:userId
+- status = ["interested", "ignored"]
+
+- POST /request/review/:status/:requestId
+- status = ["accepted", "rejected"]
 
 ## user
 
