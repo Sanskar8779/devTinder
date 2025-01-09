@@ -22,6 +22,6 @@
 
 ## user
 
+- GET /user/requests/received
 - GET /user/connections
-- GET /user/requests
 - GET /user/feed - Gets you the profile of other users
